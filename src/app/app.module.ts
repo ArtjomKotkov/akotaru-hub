@@ -43,9 +43,10 @@ function initializeApp(
     currentUserService: CurrentUserService,
 ) {
     return () => {
-        console.log('inti app')
-        globalSettingsService.init();
-        authService.init();
-        currentUserService.init();
+        new Promise((resolve, reject) => {
+            globalSettingsService.init();
+            authService.init();
+            currentUserService.init();
+        });
     }
 }

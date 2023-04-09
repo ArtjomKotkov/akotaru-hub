@@ -15,5 +15,5 @@ export interface AuthTokenPayload {
 }
 
 export interface AuthTokenPayloadState {
-    payload?: AuthTokenPayload;
+    payload?: AuthTokenPayload | null;
 }

@@ -2,19 +2,25 @@ import {Injectable} from "@angular/core";
 import {AuthFetcher} from "../../fetchers";
 import {AuthTokenPayload, TelegramLoginData} from "./models";
 import {CookieService} from "ngx-cookie-service";
-import {GlobalSettingsQuery} from "../global_settings";
 import {AuthPayloadRepository} from "./repository";
+import {GlobalSettingsRepository} from "../global_settings";
+import {BehaviorSubject, combineLatest, filter, map, Observable} from "rxjs";
+import {isNull, isUndefined} from "lodash-es";
+import {Router} from "@angular/router";
 
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
+    updateTrigger$ = new BehaviorSubject<boolean>(true);
+
     constructor(
         private authFetcher: AuthFetcher,
         private cookieService: CookieService,
-        private globalSettingsQuery: GlobalSettingsQuery,
         private authPayloadRepository: AuthPayloadRepository,
+        private globalSettingsRepository: GlobalSettingsRepository,
+        private router: Router,
     ) {
     }
 
@@ -24,30 +30,38 @@ export class AuthService {
     }
 
     init(): void {
-        const globalSettings = this.globalSettingsQuery.getValue();
-        console.log('globalSettings', globalSettings)
-        const authToken = this.cookieService.get(globalSettings.authTokenCookieName);
-        console.log(globalSettings.authTokenCookieName, authToken)
-        if (authToken.length != 0) {
-            const payload = this.decodeAuthToken(authToken);
-            this.authPayloadRepository.update(payload);
-        }
+        combineLatest([
+            this.globalSettingsRepository.settings$.pipe(filter(Boolean)),
+            this.updateTrigger$,
+        ]).subscribe(([settings, _]) => {
+            const authToken = this.cookieService.get(settings.authTokenCookieName);
+            if (authToken.length != 0) {
+                const payload = this.decodeAuthToken(authToken);
+                this.authPayloadRepository.update(payload);
+            } else {
+                this.authPayloadRepository.update(null);
+            }
+        });
     }
 
     async login(data: TelegramLoginData) {
         await this.authFetcher.auth(data);
-        this.init();
+        this.updateTrigger$.next(true);
+        this.router.navigate(['/hub']);
     }
 
-    checkLogin(): void {
-        const authToken = this.authPayloadRepository.getValue();
-        if (!authToken) {
-            throw new Error('unauthenticated')
-        }
+    isLogged(): Observable<boolean> {
+        return this.authPayloadRepository.payload$.pipe(
+            filter(payload => !isUndefined(payload)),
+            map(payload => {
+                if (isNull(payload)) {
+                    return false;
+                }
 
-        if (new Date(authToken.expiresIn) < new Date()) {
-            throw new Error('auth_token-expired')
-        }
+                // @ts-ignore
+                return new Date(payload.expiresIn * 1000) > new Date();
+            })
+        )
     }
 
     private decodeAuthToken(token: string): AuthTokenPayload {

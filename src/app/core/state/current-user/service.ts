@@ -3,7 +3,7 @@ import {AuthPayloadRepository} from "../auth";
 import {CurrentUserRepository} from "./repository";
 import {UserFetcher} from "../../fetchers";
 import {GetUserResponse} from "../../fetchers/user/responses";
-import {CurrentUser} from "./model";
+import {CurrentUser} from "./models";
 
 @Injectable({
     providedIn: 'root'

@@ -21,6 +21,8 @@
     "@datorama/akita": "^8.0.1",
     "@ngneat/elf": "^2.3.1",
     "@ngneat/elf-entities": "^4.4.4",
+    "@types/lodash-es": "^4.17.7",
+    "lodash-es": "^4.17.21",
     "ngx-cookie-service": "^15.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.5.0",

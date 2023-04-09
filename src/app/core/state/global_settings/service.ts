@@ -1,25 +1,28 @@
 import {Injectable} from "@angular/core";
 import {GlobalSettingsFetcher, GlobalSettingsGetResponse} from "../../fetchers";
-import {GlobalSettingsStore} from "./store";
+
 import {GlobalSettings} from "./models";
+import {GlobalSettingsRepository} from "./repository";
 
 
 @Injectable({
     providedIn: 'root'
 })
 export class GlobalSettingsService {
-    store = new GlobalSettingsStore();
 
-    constructor(private globalSettingsFetcher: GlobalSettingsFetcher) {
+    constructor(
+        private globalSettingsFetcher: GlobalSettingsFetcher,
+        private globalSettingsRepository: GlobalSettingsRepository,
+    ) {
     }
 
-    init() {
-        this.get();
+    async init() {
+        await this.get();
     }
 
     private async get(): Promise<void> {
         const result = await this.globalSettingsFetcher.get();
-        this.store.update(this.parseResponse(result));
+        this.globalSettingsRepository.update(this.parseResponse(result))
     }
 
     private parseResponse(response: GlobalSettingsGetResponse): GlobalSettings {

@@ -14,6 +14,7 @@ export class UserFetcher {
     }
 
     async get(request: GetUserRequest): Promise<GetUserResponse> {
-        return await this.request.get(`${this.url}/${request.id}`);
+        const request_ = await this.request.get(`${this.url}/${request.id}`);
+        return await request_.json();
     }
 }

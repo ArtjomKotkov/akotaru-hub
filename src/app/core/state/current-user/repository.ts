@@ -1,6 +1,6 @@
 import {createStore, select, withProps} from '@ngneat/elf';
 import {Injectable} from "@angular/core";
-import {CurrentUserState} from "./model";
+import {CurrentUserState} from "./models";
 
 
 const currentUserStore = createStore(
