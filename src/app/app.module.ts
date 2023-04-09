@@ -7,6 +7,8 @@ import {AppComponent} from './app.component';
 import {MainComponent} from './main/main.component';
 import {AuthModule} from "./auth/auth.module";
 import {AuthService, CurrentUserService, GlobalSettingsService} from "./core";
+import {MainModule} from "./main/main.module";
+import {CaloryModule} from "./main/features/calory/calory.module";
 
 
 @NgModule({
@@ -19,6 +21,8 @@ import {AuthService, CurrentUserService, GlobalSettingsService} from "./core";
         HttpClientModule,
         AppRoutingModule,
         AuthModule,
+        MainModule,
+        CaloryModule,
     ],
     providers: [
         {

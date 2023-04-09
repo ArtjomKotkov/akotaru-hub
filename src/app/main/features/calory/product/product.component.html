@@ -1,0 +1,16 @@
+<div>
+    <form [formGroup]="form">
+        name: <input formControlName="name">
+        calories: <input formControlName="calories" type="number">
+        protein: <input formControlName="protein">
+        carbohydrate: <input formControlName="carbohydrate">
+        fat: <input formControlName="fat">
+    </form>
+    <button (click)="create()">create</button>
+
+    <div class="product" *ngFor="let product of products$ | async">
+        <div>id: {{product.id}}</div>
+        <div>name: {{product.name}}</div>
+        <button (click)="delete(product.id)">delete</button>
+    </div>
+</div>

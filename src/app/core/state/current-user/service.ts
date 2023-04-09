@@ -20,6 +20,7 @@ export class CurrentUserService {
         this.authPayloadRepo.payload$.subscribe(payload =>  {
             if (payload?.id) {
                 this.userFetcher.get({id: payload.id}).then(response => {
+                    console.log(response)
                     this.currentUserRepo.update(this.extractUser(response));
                 });
             }
